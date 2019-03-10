@@ -4,9 +4,8 @@ hero_image: "hero.jpg"
 date: 2019-03-09T19:07:26+01:00
 draft: true
 description: How-to configure easily NGINX in HTTPS
-# categories: ["docker"]
-# series: ["configuration"]
-# tags: ["nginx", "https"]
+categories: ["docker"]
+tags: ["nginx", "https"]
 ---
 
 
@@ -41,7 +40,7 @@ echo "Bash code"
 
 ## node
 
-```javascript
+```js
 async function test() {
     console.log("async func in node")
 }
@@ -51,7 +50,7 @@ test()
 
 ## highlight
 
-{{< highlight javascript >}}
+{{< highlight js >}}
 async function test() {
     console.log("async func in node")
 }

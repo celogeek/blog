@@ -1,3 +1,18 @@
 [submodule "themes/minimal-academic"]
 	path = themes/minimal-academic
 	url = https://github.com/jhu247/minimal-academic.git
+[submodule "themes/refined"]
+	path = themes/refined
+	url = https://gitlab.com/kaushalmodi/hugo-theme-refined
+[submodule "themes/hugo-atom-feed"]
+	path = themes/hugo-atom-feed
+	url = https://github.com/kaushalmodi/hugo-atom-feed
+[submodule "themes/hugo-jf2"]
+	path = themes/hugo-jf2
+	url = https://github.com/kaushalmodi/hugo-jf2
+[submodule "themes/hugo-search-fuse-js"]
+	path = themes/hugo-search-fuse-js
+	url = https://github.com/kaushalmodi/hugo-search-fuse-js
+[submodule "themes/hugo-debugprint"]
+	path = themes/hugo-debugprint
+	url = https://github.com/kaushalmodi/hugo-debugprint

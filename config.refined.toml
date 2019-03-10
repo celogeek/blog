@@ -1,0 +1,4 @@
+baseurl = "https://blog.celogeek.com/"
+title = "Celogeek Blog"
+copyright = "&copy; Celogeek 2019"
+theme = "refined"

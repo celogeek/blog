@@ -3,10 +3,10 @@ title: "Nginx - Full HTTPS"
 hero_image: "hero.jpg"
 date: 2019-03-09T19:07:26+01:00
 draft: true
-description: How to configure easily NGINX in HTTPS.
+description: How-to configure easily NGINX in HTTPS
 # categories: ["docker"]
-series: ["configuration"]
-tags: ["nginx", "https"]
+# series: ["configuration"]
+# tags: ["nginx", "https"]
 ---
 
 
@@ -26,14 +26,22 @@ test | me | well
   Alice | 23
 
 ## bash
-```
+
+```bash
 #!/bin/sh
 
 echo "Bash code"
 ```
 
+{{< highlight sh >}}
+#!/bin/sh
+
+echo "Bash code"
+{{< /highlight >}}
+
 ## node
-```
+
+```javascript
 async function test() {
     console.log("async func in node")
 }
@@ -42,10 +50,11 @@ test()
 ```
 
 ## highlight
-```nodejs
+
+{{< highlight javascript >}}
 async function test() {
     console.log("async func in node")
 }
 
 test()
-```
+{{< /highlight >}}

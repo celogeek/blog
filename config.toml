@@ -1,1 +1,6 @@
-config.refined.toml
+baseurl = "https://blog.celogeek.com/"
+title = "Celogeek Blog"
+copyright = "&copy; Celogeek 2019"
+theme = "refined"
+pygmentsUseClasses = true
+pygmentsCodeFences = true

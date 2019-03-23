@@ -3,8 +3,8 @@ title: "Nginx - Full HTTPS Proxy"
 hero_image: "hero.jpg"
 date: 2019-03-09T19:07:26+01:00
 description: How-to configure NGINX in Full HTTPS Proxy.
-categories: ["configuration"]
-tags: ["nginx", "https", "ssl", "proxy", "letsencrypt", "docker", "docker-compose"]
+categories: ["docker"]
+tags: ["nginx", "ssl", "proxy", "letsencrypt"]
 ---
 
 ## Introduction
@@ -14,26 +14,9 @@ Tools like [Let's Encrypt](https://letsencrypt.org) make it so easy to secure yo
 
 I have made an NGINX setup that allows you to connect any services you need very quickly.
 
-My NGINX setup includes:
-
-- https only configuration
-- certificate generation and validation:
-  - [Let's Encrypt](https://letsencrypt.org)
-  - nginx config for [Let's Encrypt](https://letsencrypt.org) validation and https redirection
-  - script to generate a certificate
-- optimization for services behind the proxy
-- easy includable file to add a new site
-- realip:
-  - cloudflare autoconfiguration
-  - IPV4/IPV6 detection of the host
-
 ## Usage
 
-### docker service
-
-You can use the service with docker-compose:
-
-*docker-compose.yml:*
+### [docker-compose.yml](https://github.com/celogeek/nginx-full-https/blob/master/docker-compose.example.yml)
 ```yaml
 version: '2.4'
 
@@ -43,7 +26,7 @@ volumes:
 
 services:
   proxy:
-    image: celogeek/nginx-full-https:latest
+    image: celogeek/nginx-full-https
     restart: always
     volumes:
       - web.ssl:/etc/letsencrypt
@@ -52,154 +35,70 @@ services:
     ports:
       - "80:80"
       - "443:443"
-    logging:
-      options:
-        max-size: "2m"
-        max-file: "5"
 ```
 
-### add a new certificate
-
-To add a new certificate:
-  * setup your domain (ex: static.my.domain) with your server address.
-  * create your certificate using my helper.
+### Create a new SSL certificate
 
 ```sh
-docker-compose exec proxy /create-cert.sh "static.my.domain"
+docker-compose exec proxy /create-cert.sh "blog.example.com"
 ```
 
-This will create with [Let's Encrypt](https://letsencrypt.org) your certificate and validate it with your proxy server.
+### Connect your site
 
-## Examples
-
-Here some example of sites configurations:
-
-### Static:
+You can proxified a service with a simple configuration:
 ```nginx
 server {
-        include conf.d/listen_https.conf;
-        server_name  static.my.domain;
+  include conf.d/listen_https.conf;
+  server_name  mysite.example.com;
 
-        ssl_certificate /etc/letsencrypt/live/static.my.domain/fullchain.pem;
-        ssl_certificate_key /etc/letsencrypt/live/static.my.domain/privkey.pem;
+  ssl_certificate /etc/letsencrypt/live/mysite.example.com/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/mysite.example.com/privkey.pem;
 
-        root /var/www/static;
-
-        location / {
-                try_files $uri =404;
-        }
+  location / {
+    include conf.d/proxy_params;
+    proxy_pass http://mysite;
+  }
 }
 ```
 
-### RSPAMD
-```nginx
-server {
-        include conf.d/listen_https.conf;
-        server_name  rspamd.my.domain;
+You only need to handle the HTTPS requests because the HTTP ones are redirected to the HTTPS equivalent.
 
-        ssl_certificate /etc/letsencrypt/live/rspamd.my.domain/fullchain.pem;
-        ssl_certificate_key /etc/letsencrypt/live/rspamd.my.domain/privkey.pem;
+## Functionalities
 
-        location / {
-                include proxy_params;
-                proxy_pass http://rspamd:11334;
-        }
-}
+### Auto redirect to HTTPS
+
+All HTTP requests are automatically redirected to the HTTPS equivalent.
+
+Example:
+
+| from | to |
+|------|----|
+| ```http://example.com``` | ```https://example.com``` |
+| ```http://example.com?my=params``` | ```https://example.com?my=params``` |
+| ```http://example.com?my=params#anchor``` | ```https://example.com?my=params#anchor``` |
+
+### [Let's Encrypt](https://letsencrypt.org)
+
+A helper to create an SSL certificate is included in the image:
+
+```sh
+docker-compose exec proxy /create-cert.sh "blog.example.com"
 ```
 
-### RethinkDB with Auth
-```nginx
-server {
-        include conf.d/listen_https.conf;
-        server_name  rethinkdb.my.domain;
+This command creates an SSL certificate and validates it with the server.
 
-        ssl_certificate /etc/letsencrypt/live/rethinkdb.my.domain/fullchain.pem;
-        ssl_certificate_key /etc/letsencrypt/live/rethinkdb.my.domain/privkey.pem;
+All the certificates you generate are also automatically renewed on time.
 
-        auth_basic "RethinkDB Admin";
-        auth_basic_user_file htpasswd/rethinkdb;
+### Real IP
 
-        location / {
-                include proxy_params;
-                proxy_pass http://rethinkdb:8080;
-        }
-}
-```
+A crontab is set up to detect the IP of your visitors by filtering [Cloudflare](https://cloudflare.com/) IP addresses and your docker host IP addresses automatically.
 
-You also need to add to your volume:
-```yaml
-    volumes:
-      - ./htpasswd:/etc/nginx/htpasswd:ro
-```
+## Links
 
-### Nextcloud
-```nginx
-server {
-        include conf.d/listen_https.conf;
-        server_name  cloud.my.domain;
+In order to use the docker image, you can find several usefull link below:
 
-        ssl_certificate /etc/letsencrypt/live/cloud.my.domain/fullchain.pem;
-        ssl_certificate_key /etc/letsencrypt/live/cloud.my.domain/privkey.pem;
-        access_log off;
+- [Github Repos](https://github.com/celogeek/nginx-full-https)
+- [Docker Image](https://cloud.docker.com/repository/docker/celogeek/nginx-full-https)
+- [Docker Compose Example](https://github.com/celogeek/nginx-full-https/blob/master/docker-compose.example.yml)
+- [Configuration Examples](https://github.com/celogeek/nginx-full-https/tree/master/sites.example)
 
-        location / {
-                include proxy_params;
-                proxy_pass http://nextcloud;
-        }
-
-        location = /.well-known/carddav {
-                return 301 $scheme://$host/remote.php/dav;
-        }
-
-        location = /.well-known/caldav {
-                return 301 $scheme://$host/remote.php/dav;
-        }
-}
-```
-
-### OpenOffice for Nextcloud
-```nginx
-server {
-        include conf.d/listen_https.conf;
-        server_name  cloud-office.my.domain;
-        ssl_certificate /etc/letsencrypt/live/cloud-office.my.domain/fullchain.pem;
-        ssl_certificate_key /etc/letsencrypt/live/cloud-office.my.domain/privkey.pem;
-        access_log off;
-        
-        # static files   
-        location ^~ /loleaflet {           
-                proxy_pass https://nextcloud-office:9980;    
-                proxy_set_header Host $http_host;
-        }
-
-        # WOPI discovery URL
-        location ^~ /hosting/discovery {
-                proxy_pass https://nextcloud-office:9980;
-                proxy_set_header Host $http_host;
-        }
-
-        # main websocket
-        location ~ ^/lool/(.*)/ws$ {
-                proxy_pass https://nextcloud-office:9980;
-                proxy_set_header Upgrade $http_upgrade;
-                proxy_set_header Connection "Upgrade";
-                proxy_set_header Host $http_host;
-                proxy_read_timeout 36000s;
-        }
-
-        # download, presentation and image upload
-        location ~ ^/lool {
-                proxy_pass https://nextcloud-office:9980;
-                proxy_set_header Host $http_host;
-        }       
-        
-        # Admin Console websocket
-        location ^~ /lool/adminws {
-                proxy_pass https://nextcloud-office:9980;
-                proxy_set_header Upgrade $http_upgrade;
-                proxy_set_header Connection "Upgrade";
-                proxy_set_header Host $http_host;
-                proxy_read_timeout 36000s;
-        }       
-}       
-```

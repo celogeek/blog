@@ -98,7 +98,7 @@ A crontab is set up to detect the IP of your visitors by filtering [Cloudflare](
 In order to use the docker image, you can find several usefull link below:
 
 - [Github Repos](https://github.com/celogeek/nginx-full-https)
-- [Docker Image](https://cloud.docker.com/repository/docker/celogeek/nginx-full-https)
+- [Docker Image](https://hub.docker.com/r/celogeek/nginx-full-https)
 - [Docker Compose Example](https://github.com/celogeek/nginx-full-https/blob/master/docker-compose.example.yml)
 - [Configuration Examples](https://github.com/celogeek/nginx-full-https/tree/master/sites.example)
 

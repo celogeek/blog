@@ -4,3 +4,6 @@ copyright = "&copy; Celogeek 2019"
 theme = "refined"
 pygmentsUseClasses = true
 pygmentsCodeFences = true
+[params]
+  AuthorName = "Celogeek"
+  GitHubUser = "celogeek"

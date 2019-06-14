@@ -1,4 +1,4 @@
-baseurl = "https://blog.celogeek.com/"
+baseurl = "/"
 title = "Celogeek Blog"
 copyright = "&copy; Celogeek 2019"
 theme = "refined"

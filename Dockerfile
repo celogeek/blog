@@ -1,12 +1,16 @@
 FROM alpine:edge
 
-RUN apk add --no-cache hugo
-
-COPY . /site
+RUN apk add --no-cache hugo nodejs npm
 
 WORKDIR /site
 
+RUN npm install -g http-server
+
+COPY . /site
+
+RUN hugo --minify
+
 EXPOSE 1313
 
-CMD ["hugo", "server", "--environment", "production", "--bind", "0.0.0.0", "--port", "1313", "--appendPort=false", "--baseURL", "/"]
+CMD ["http-server", "public", "-p", "1313"]
 

@@ -2,11 +2,11 @@ FROM alpine:edge
 
 RUN apk add --no-cache hugo nodejs npm
 
-WORKDIR /site
-
 RUN npm install -g http-server
 
 COPY . /site
+
+WORKDIR /site
 
 RUN hugo --minify
 

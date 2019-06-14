@@ -10,7 +10,7 @@ WORKDIR /site
 
 RUN hugo --minify
 
-EXPOSE 1313
+EXPOSE 8080
 
-CMD ["http-server", "public", "-p", "1313"]
+CMD ["http-server", "public"]
 
